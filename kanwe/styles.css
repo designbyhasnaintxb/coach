@@ -1038,8 +1038,8 @@ body { font-stretch: 108%; }
 .offer__pitch path { fill: none; stroke: rgba(244,239,230,.32); stroke-width: 2; vector-effect: non-scaling-stroke; }
 
 .offer__zone { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: clamp(36px, 4vw, 64px) clamp(28px, 4vw, 64px); transition: background-color .5s; }
-.offer__zone > :not(.offer__sel):not(.offer__svg) { position: relative; z-index: 2; pointer-events: none; }
-.offer__zone .offer__cta { pointer-events: auto; }
+.offer__zone > :not(.offer__sel):not(.offer__svg):not(.offer__img):not(.offer__cta) { position: relative; z-index: 2; pointer-events: none; }
+.offer__zone > .offer__cta { position: relative; z-index: 2; pointer-events: auto; }
 .offer__zone + .offer__zone { border-left: 2px solid rgba(244,239,230,.32); }
 .offer__zone + .offer__zone::before { content: ""; position: absolute; z-index: 0; left: -80px; top: 50%; width: 156px; height: 156px; margin-top: -78px; border-radius: 50%; border: 2px solid rgba(244,239,230,.32); pointer-events: none; }
 .offer__zone + .offer__zone::after { content: ""; position: absolute; left: -6px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: var(--lime); pointer-events: none; }
@@ -1216,3 +1216,29 @@ a.fsocial--light:hover { border-color: rgba(230,106,52,.6); background: var(--ca
 .menu__plate .lm { width: 96px; height: 96px; }
 .menu { background: var(--green); }
 .menu__name { text-transform: uppercase; }
+
+/* ==========================================================================
+   REAL PHOTOGRAPHY — client-supplied photos in place of the media slots.
+   The field drawing in the hero stays as a quiet brand overlay; a soft
+   midnight wash at the bottom keeps the caption legible over the photo.
+   ========================================================================== */
+.hero__media::after { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: linear-gradient(0deg, rgba(21,28,38,.78) 0%, rgba(21,28,38,0) 34%), linear-gradient(180deg, rgba(22,58,50,.35) 0%, rgba(22,58,50,0) 22%); }
+.hero__media:has(img) .hero__lines path { stroke: rgba(244,239,230,.22); }
+.hero__media:has(img) .hero__spot { fill: rgba(244,239,230,.4); }
+.hero__media img { object-position: 58% 22%; }
+.hero__slotnote { border-style: solid; border-color: rgba(185,216,62,.45); color: var(--on-dark); }
+
+/* Pricing: each training zone carries a supporting photo that fades up with the selection */
+.offer__zone { isolation: isolate; }
+.offer__img { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; opacity: 0; filter: saturate(.75); -webkit-mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.55) 45%, transparent 92%); mask-image: linear-gradient(180deg, #000 0%, rgba(0,0,0,.55) 45%, transparent 92%); transform: scale(1.06); transition: opacity .8s var(--ease), transform 1.4s var(--ease); pointer-events: none; }
+.offer__zone.is-on .offer__img { opacity: .2; transform: none; }
+.offer__zone[data-z="90"] .offer__img { object-position: 50% 30%; }
+@media (max-width: 860px) { .offer__zone .offer__img { opacity: .12; transform: none; } .offer__zone.is-on .offer__img { opacity: .18; } }
+
+/* Gallery tiles: photos sit above the slot gradient; the ball shot keeps the player in frame */
+.tile img[src*="kwame-ball"] { object-position: 20% 50%; }
+.tile img[src*="kwame-coaching"] { object-position: 55% 40%; }
+
+/* Footer: the evening-lights photo as a quiet backdrop under a forest wash */
+.footer__bg img { opacity: .22; object-position: 50% 30%; filter: saturate(.6); }
+.footer__bg::after { content: ""; position: absolute; inset: 0; z-index: 2; background: linear-gradient(180deg, rgba(15,43,37,.55) 0%, rgba(15,43,37,.8) 50%, var(--forest-deep) 100%); }
