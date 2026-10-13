@@ -9,8 +9,10 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Coach Kwame | 1-on-1 Soccer Training">
 <meta property="og:description" content="One player. One session. One clear focus. Private soccer training: $35 / 60 minutes, $55 / 90 minutes.">
-<!-- TO ADD: og:image once an approved photo of Coach Kwame is in assets/media/ -->
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="assets/media/kwame-og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23163A32'/%3E%3Cpath d='M23 13.4A10.5 10.5 0 1 0 23 30.6' fill='none' stroke='%23F4EFE6' stroke-width='3.4' stroke-linecap='round'/%3E%3Cpath d='M29.5 11.5V32.5' stroke='%23F4EFE6' stroke-width='3.4' stroke-linecap='round'/%3E%3Cpath d='M41 11.5L31.5 22L41 32.5' fill='none' stroke='%23E66A34' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='41' cy='40' r='2.4' fill='%23B9D83E'/%3E%3Cpath d='M7 40H35' stroke='%23F4EFE6' stroke-opacity='.4' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E">
 
 <script>
@@ -27,6 +29,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=DM+Sans:opsz,wght@9..40,400..700&display=swap">
 <link rel="stylesheet" href="styles.css">
+<link rel="preload" as="image" type="image/webp" href="assets/media/kwame-hero-1095.webp" imagesrcset="assets/media/kwame-hero-640.webp 640w, assets/media/kwame-hero-1095.webp 1095w" imagesizes="(max-width: 1023px) 92vw, 46vw">
 
 <!-- Structured data. TO CONFIRM before launch: full public name, service area and currency
      (prices are shown as "$" only until the currency is confirmed). -->
@@ -175,14 +178,9 @@
     </div>
 
     <div class="hero__visual">
-      <!-- MEDIA SLOT · hero. Add the strongest approved photo of Coach Kwame coaching on the field:
-           <img src="assets/media/kwame-hero-1300.webp" srcset="… 800w, … 1300w, … 1900w" sizes="(max-width: 1023px) 92vw, 46vw" alt="…" fetchpriority="high" decoding="async">
-           The field drawing below stays on top as the brand overlay. -->
-      <figure class="hero__media media slot" data-slot="Photo · Coach Kwame on the field">
-        <svg class="slot__art" viewBox="0 0 600 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-          <g class="slot__stripes"><rect x="0" y="0" width="600" height="90"/><rect x="0" y="180" width="600" height="90"/><rect x="0" y="360" width="600" height="90"/><rect x="0" y="540" width="600" height="90"/></g>
-          <text class="slot__mono" x="300" y="470" text-anchor="middle">CK</text>
-        </svg>
+      <!-- Hero photo: supplied by the client (see kwame-notes.md). The field drawing stays on top as the brand overlay. -->
+      <figure class="hero__media media" data-ph="Photo · Coach Kwame">
+        <img src="assets/media/kwame-hero-1095.webp" srcset="assets/media/kwame-hero-640.webp 640w, assets/media/kwame-hero-1095.webp 1095w" sizes="(max-width: 1023px) 92vw, 46vw" width="1095" height="1437" alt="Coach Kwame on the field under the lights, directing play with his arm out" fetchpriority="high" decoding="async">
         <svg class="hero__geo" viewBox="0 0 600 720" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
           <g class="hero__lines">
             <path pathLength="1" d="M40 40H560V700H40Z"/>
@@ -200,7 +198,7 @@
           </g>
           <g class="hero__ball" transform="translate(300 210)"><circle r="9"/><path d="M0 -4l3.8 2.8-1.4 4.4h-4.8l-1.4-4.4z"/></g>
         </svg>
-        <figcaption class="hero__cap"><span class="hero__legend"><i class="hero__lg hero__lg--coach"></i>Coach</span><span class="hero__legend"><i class="hero__lg hero__lg--player"></i>Player</span><span class="hero__slotnote">Photo of Coach Kwame · to add</span></figcaption>
+        <figcaption class="hero__cap"><span class="hero__legend"><i class="hero__lg hero__lg--coach"></i>Coach</span><span class="hero__legend"><i class="hero__lg hero__lg--player"></i>Player</span><span class="hero__slotnote">Coach Kwame</span></figcaption>
       </figure>
 
       <div class="hero__card">
@@ -237,8 +235,9 @@
         <svg class="about__mono" viewBox="0 0 48 48"><path class="lm-line" pathLength="1" d="M6 42H42"/><path class="lm-c" pathLength="1" d="M23 13.4A10.5 10.5 0 1 0 23 30.6"/><path class="lm-k1" pathLength="1" d="M29.5 11.5V32.5"/><path class="lm-k2" pathLength="1" d="M41 11.5L31.5 22L41 32.5"/></svg>
         <p class="about__plate-t">Coach Kwame<span>1-on-1 soccer training</span></p>
       </div>
-      <!-- MEDIA SLOT · about. Add an approved portrait / field-side photo of Coach Kwame as an <img> inside this figure. -->
-      <figure class="about__portrait media slot slot--light" data-slot="Portrait · to add"></figure>
+      <figure class="about__portrait media" data-ph="Portrait · Coach Kwame">
+        <img src="assets/media/kwame-portrait-480.webp" srcset="assets/media/kwame-portrait-480.webp 480w, assets/media/kwame-portrait-900.webp 900w" sizes="(max-width: 700px) 46vw, 260px" width="480" height="600" alt="Portrait of Coach Kwame smiling" loading="lazy" decoding="async">
+      </figure>
     </div>
 
     <div class="about__body">
@@ -280,9 +279,10 @@
         <path d="M14 222H58V338H14M986 222H942V338H986"/>
       </svg>
 
-      <article class="offer__zone" data-z="60" aria-labelledby="o60-t">
+      <article class="offer__zone is-on" data-z="60" aria-labelledby="o60-t">
         <!-- the player path: the selected zone's path draws and the ball runs it -->
         <svg class="offer__svg" viewBox="0 0 500 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path class="offer__path" pathLength="1" d="M420 500C380 420 300 470 270 390S330 270 250 220S120 200 150 110"/><circle class="offer__dot" cx="420" cy="500" r="9"/><circle class="offer__ball" cx="150" cy="110" r="8"/></svg>
+        <img class="offer__img" src="assets/media/kwame-field-464.webp" width="464" height="580" alt="" loading="lazy" decoding="async">
         <button type="button" class="offer__sel" data-z="60" aria-pressed="true" data-cursor="Select"><span class="sr-only">Highlight the 60-minute session</span></button>
         <p class="offer__n"><span>01</span>1-on-1 training</p>
         <h3 class="offer__dur" id="o60-t"><b>60</b> minutes</h3>
@@ -294,6 +294,7 @@
 
       <article class="offer__zone" data-z="90" aria-labelledby="o90-t">
         <svg class="offer__svg" viewBox="0 0 500 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><path class="offer__path" pathLength="1" d="M80 500C160 450 120 360 220 350S400 390 390 280S280 170 350 120S440 90 460 60"/><circle class="offer__dot" cx="80" cy="500" r="9"/><circle class="offer__ball" cx="460" cy="60" r="8"/></svg>
+        <img class="offer__img" src="assets/media/kwame-ball-zone-500.webp" width="500" height="950" alt="" loading="lazy" decoding="async">
         <button type="button" class="offer__sel" data-z="90" aria-pressed="false" data-cursor="Select"><span class="sr-only">Highlight the 90-minute session</span></button>
         <p class="offer__n"><span>02</span>Extended 1-on-1 training</p>
         <h3 class="offer__dur" id="o90-t"><b>90</b> minutes</h3>
@@ -323,7 +324,7 @@
       <p class="eyebrow eyebrow--light">On the field</p>
       <h2 class="h2 h2--light split" id="tim-title">Training <em>in action.</em></h2>
     </div>
-    <p class="tim__note fade">Real sessions only — photos and clips from Coach Kwame's own Facebook. No stock footage, ever.</p>
+    <p class="tim__note fade">Real photos of Coach Kwame only. No stock images, no stock footage.</p>
   </div>
 
   <!-- VIDEO BLOCK · "Training in motion". Kept from the original build (muted inline preview, pause offscreen,
@@ -354,15 +355,26 @@
 
   <div class="wrap gal">
     <div class="gal__head">
-      <h3 class="gal__title">From the training ground</h3>
-      <p class="gal__note">1-on-1 work · Ball work · Coaching · Field sessions</p>
+      <h3 class="gal__title">Coach Kwame on the field</h3>
+      <p class="gal__note">Coaching · On the ball · The training ground</p>
     </div>
-    <!-- MEDIA SLOTS · gallery. Replace each slot with an approved photo:
-         <figure class="tile media"><img …><button type="button" class="tile__open" data-cursor="View" data-full="…" aria-label="View larger: …"></button><figcaption class="tile__cap"><b>…</b>…</figcaption></figure> -->
+    <!-- Photos supplied by the client. Captions describe only what is visible. Add more tiles in the same pattern. -->
     <div class="grid">
-      <figure class="tile media slot" data-slot="Photo slot · 1-on-1 work"><figcaption class="tile__cap"><b>1-on-1</b>Photo coming soon</figcaption></figure>
-      <figure class="tile media slot" data-slot="Photo slot · ball work"><figcaption class="tile__cap"><b>Technique</b>Photo coming soon</figcaption></figure>
-      <figure class="tile media slot" data-slot="Photo slot · coaching"><figcaption class="tile__cap"><b>Coaching</b>Photo coming soon</figcaption></figure>
+      <figure class="tile media" data-ph="Coaching">
+        <img src="assets/media/kwame-coaching-560.webp" srcset="assets/media/kwame-coaching-560.webp 560w, assets/media/kwame-coaching-1000.webp 1000w" sizes="(max-width: 700px) 74vw, 31vw" width="560" height="700" alt="Coach Kwame in a bucket hat explaining a drill to two players in training bibs" loading="lazy" decoding="async">
+        <button type="button" class="tile__open" data-cursor="View" data-full="assets/media/kwame-coaching-1000.webp" aria-label="View larger: Coach Kwame coaching"></button>
+        <figcaption class="tile__cap"><b>Coaching</b>Working with players</figcaption>
+      </figure>
+      <figure class="tile media" data-ph="On the ball">
+        <img src="assets/media/kwame-ball-560.webp" srcset="assets/media/kwame-ball-560.webp 560w, assets/media/kwame-ball-997.webp 997w" sizes="(max-width: 700px) 74vw, 31vw" width="560" height="700" alt="Coach Kwame striking the ball under the lights" loading="lazy" decoding="async">
+        <button type="button" class="tile__open" data-cursor="View" data-full="assets/media/kwame-ball-997.webp" aria-label="View larger: Coach Kwame on the ball"></button>
+        <figcaption class="tile__cap"><b>On the ball</b>Coach Kwame</figcaption>
+      </figure>
+      <figure class="tile media" data-ph="The training ground">
+        <img src="assets/media/kwame-field-464.webp" width="464" height="580" sizes="(max-width: 700px) 74vw, 31vw" alt="An open grass field set out with training cones" loading="lazy" decoding="async">
+        <button type="button" class="tile__open" data-cursor="View" data-full="assets/media/kwame-field-464.webp" aria-label="View larger: the training ground"></button>
+        <figcaption class="tile__cap"><b>The ground</b>Cones out, ready to work</figcaption>
+      </figure>
     </div>
     <p class="grid__hint" aria-hidden="true">Swipe for more →</p>
     <a class="gal__fb" href="https://web.facebook.com/profile.php?id=100095092693624" target="_blank" rel="noopener">
@@ -515,7 +527,7 @@
 
               <p class="field__l" style="--d:2">Payment</p>
               <div class="iq-pay" style="--d:2">
-                <label class="iq-pay__opt"><input type="radio" name="payment_preference" value="Pay after confirmation" checked><span><b>Pay after confirmation</b><small>Kwame confirms the session first — nothing is charged here.</small></span></label>
+                <label class="iq-pay__opt"><input type="radio" name="payment_preference" value="Arrange payment with Coach Kwame" checked><span><b>Arrange with Coach Kwame</b><small>Payment is sorted out directly with Kwame when he confirms. Nothing is charged here.</small></span></label>
                 <label class="iq-pay__opt"><input type="radio" name="payment_preference" value="Interested in paying online (demo)"><span><b>Pay online <em class="tag tag--demo">Demo · to connect</em></b><small>A preview of online payment. It isn't connected, so nothing can be charged.</small></span></label>
                 <div class="iq-pay__demo" aria-hidden="true">
                   <p class="iq-pay__demo-k"><i></i>Payment preview — not connected</p>
@@ -634,7 +646,7 @@
 
 <!-- ═════════ 07 — FINAL CTA + FOOTER (kept framework) ═════════ -->
 <section class="footer" id="final" aria-labelledby="closing-title">
-  <div class="footer__bg" aria-hidden="true"></div>
+  <div class="footer__bg" aria-hidden="true"><img src="assets/media/kwame-lights-wide-1095.webp" width="1095" height="616" alt="" loading="lazy" decoding="async"></div>
   <div class="wrap">
     <div class="fcta">
       <h2 class="fcta__title" id="closing-title">

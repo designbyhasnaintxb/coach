@@ -1,8 +1,8 @@
-# Netlify settings for the Coach Santana soccer coaching site (plain static site — no build step)
+# Netlify settings for the Coach Kwame 1-on-1 soccer training site (plain static site — no build step)
 [build]
   publish = "."
 
-# Photos and clips rarely change: cache them for a week
+# Photos rarely change: cache them for a week
 [[headers]]
   for = "/assets/*"
   [headers.values]
@@ -18,7 +18,21 @@
 
 # Internal media / launch notes are not part of the public site
 [[redirects]]
-  from = "/SANTANA-NOTES.md"
+  from = "/kwame-notes.md"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# The previous client's build is kept in the repo for reference only. It must never be served on this site.
+[[redirects]]
+  from = "/_old-client/*"
+  to = "/404.html"
+  status = 404
+  force = true
+
+# The original build's 3D pitch module is no longer loaded by the page
+[[redirects]]
+  from = "/pitch3d.js"
   to = "/404.html"
   status = 404
   force = true

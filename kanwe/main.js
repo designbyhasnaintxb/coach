@@ -1,7 +1,11 @@
 /* ==========================================================================
-   COACH SANTANA — Soccer Coaching & Player Development
-   Page behaviour. The 3D pitch (pitch3d.js) is loaded only when its section
-   gets close to the viewport; video clips load only when they are near.
+   COACH KWAME — 1-on-1 Soccer Training
+   Page behaviour. Kept from the original build: smooth scroll (Lenis),
+   header / menu / cursor, word-split reveals, the media viewer + gallery
+   lightbox, the stepped Netlify form mechanics, logo loop and footer.
+   New for Kwame: the hero sequence, the 60 / 90 pricing field and the
+   five-step session request. THE DEVELOPMENT PATH (a thin lime trajectory)
+   links them: hero pass → pricing zones → booking step progress.
    Progressive enhancement: all content is readable with no JS and no motion.
    ========================================================================== */
 (() => {
@@ -54,24 +58,21 @@
   };
 
   /* ==========================================================================
-     TRAINING SELECTION — one shared choice for the whole page.
-     The pitch selector, menu links and every "Ask about …" CTA set it; the
-     inquiry form (step 02) is pre-filled from it. A choice the visitor makes
-     is remembered (localStorage, per browser) so it survives a reload.
+     SESSION CHOICE — one shared choice for the whole page.
+     Pricing zones, menu links and every "Book …" CTA set it; the request
+     form (step 01) is pre-filled from it. Remembered per browser.
      ========================================================================== */
-  const TYPES = ['private', 'group', 'beginner', 'team'];
-  const STORE_KEY = 'coachSantana.training';
-  let trainChosen = null;
-  try { const v = localStorage.getItem(STORE_KEY); if (TYPES.includes(v)) trainChosen = v; } catch (e) { /* storage unavailable */ }
-  let trainShown = trainChosen || 'private';
-  const trainSubs = [];
-  const onTraining = (fn) => trainSubs.push(fn);
-  const setTraining = (t, from) => {
-    if (!TYPES.includes(t)) return;
-    trainShown = t;
-    trainChosen = t;
-    try { localStorage.setItem(STORE_KEY, t); } catch (e) { /* storage unavailable */ }
-    trainSubs.forEach((fn) => fn(t, from));
+  const SESSIONS = ['60', '90', 'group', 'unsure'];
+  const STORE_KEY = 'coachKwame.session';
+  let sessionChosen = null;
+  try { const v = localStorage.getItem(STORE_KEY); if (SESSIONS.includes(v)) sessionChosen = v; } catch (e) { /* storage unavailable */ }
+  const sessionSubs = [];
+  const onSession = (fn) => sessionSubs.push(fn);
+  const setSession = (k, from) => {
+    if (!SESSIONS.includes(k)) return;
+    sessionChosen = k;
+    try { localStorage.setItem(STORE_KEY, k); } catch (e) { /* storage unavailable */ }
+    sessionSubs.forEach((fn) => fn(k, from));
   };
 
   /* ---------- Header: touchline indicator, active link, progress ---------- */
@@ -132,8 +133,8 @@
   d.addEventListener('click', (e) => {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
-    // links that carry a training type select it (and pre-fill the inquiry) before scrolling
-    if (a.dataset.train) setTraining(a.dataset.train, a.getAttribute('href') === '#contact' ? 'cta' : 'link');
+    // links that carry a session ("Book 60 minutes", menu shortcuts …) pre-fill the request form before scrolling
+    if (a.dataset.session) setSession(a.dataset.session, 'cta');
     const id = a.getAttribute('href');
     const target = id.length > 1 && d.querySelector(id);
     if (!target) return;
@@ -144,7 +145,7 @@
     target.focus({ preventScroll: true });
   });
 
-  /* ---------- Cursor (desktop only): VIEW · TRAIN · PLAY · DRAG ---------- */
+  /* ---------- Cursor (desktop only): VIEW · SELECT · PLAY ---------- */
   if (fine) {
     root.classList.add('has-cursor');
     const cur = $('.cursor');
@@ -215,13 +216,12 @@
   if (motion) $$('.split').forEach(splitWords);
 
   /* ==========================================================================
-     HERO — the passing line begins here. On load the photo reveals, the
-     field geometry and passing lane draw, the headline masks up line by
-     line, the ball runs the movement path, the Santana card rises and
-     "~10 yrs" counts up. On desktop the photo drifts with scroll.
+     HERO — the development path begins here. On load the photo unmasks, the
+     field lines draw, the headline rises line by line, the two prices and
+     the CTAs come in, and the ball runs the player's path. On scroll the
+     lime lane under the hero draws down towards the training options.
      ========================================================================== */
   const hero = $('.hero');
-  const heroCount = $('.hero__count', hero);
   const heroRun = $('.hero__run', hero);
   const heroBall = $('.hero__ball', hero);
   const heroRunL = heroRun.getTotalLength();
@@ -232,275 +232,143 @@
   placeHeroBall(motion ? 0 : 1);
 
   if (motion) {
-    heroCount.textContent = '0';
-    const o = { p: 0, n: 0 };
+    const o = { p: 0 };
     G.timeline({ delay: 0.1 })
       .add(() => hero.classList.add('is-shown'), 0)
-      .fromTo('.hero__kicker', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out' }, 0.15)
-      .to('.hero__in', { y: 0, yPercent: 0, duration: 1.1, stagger: 0.12, ease: 'expo.out' }, 0.25)
-      .add(() => hero.classList.add('is-drawn'), 0.6)
-      .fromTo('.hero__lede', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, 0.7)
-      .fromTo('.hero__ctas', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, 0.8)
-      .fromTo('.hero__card', { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9, ease: 'expo.out' }, 1)
-      .to(o, { n: Number(heroCount.dataset.count), duration: 1.4, ease: 'power2.out', onUpdate: () => { heroCount.textContent = Math.round(o.n); } }, 1.05)
-      .to(o, { p: 1, duration: 1.8, ease: 'power2.inOut', onUpdate: () => placeHeroBall(o.p) }, 1.1)
-      .fromTo('.hero__strip li', { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.08, ease: 'expo.out' }, 1.1)
-      .fromTo('.hero__cap', { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.5);
+      .fromTo('.hero__kicker', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, ease: 'expo.out' }, 0.1)
+      .to('.hero__in', { y: 0, yPercent: 0, duration: 1, stagger: 0.1, ease: 'expo.out' }, 0.18)
+      .add(() => hero.classList.add('is-drawn'), 0.5)
+      .fromTo('.hero__lede', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out' }, 0.55)
+      .fromTo('.hero__price li', { opacity: 0, y: 18, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.09, ease: 'expo.out' }, 0.65)
+      .fromTo('.hero__ctas', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out' }, 0.8)
+      .fromTo('.hero__card', { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.8, ease: 'expo.out' }, 0.95)
+      .to(o, { p: 1, duration: 1.6, ease: 'power2.inOut', onUpdate: () => placeHeroBall(o.p) }, 1)
+      .fromTo('.hero__strip li', { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.07, ease: 'expo.out' }, 1)
+      .fromTo('.hero__cap', { opacity: 0 }, { opacity: 1, duration: 0.6 }, 1.3);
     if (wide) G.to('.hero__media img', { yPercent: 6, ease: 'none', scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: true } });
+    // the pass leaves the hero and heads into the training options
+    G.fromTo('.hero__lane', { '--lane': 1 }, { '--lane': 0, ease: 'none', scrollTrigger: { trigger: hero, start: 'bottom 95%', end: 'bottom 25%', scrub: true } });
   } else {
     hero.classList.add('is-shown', 'is-drawn');
   }
 
   /* ==========================================================================
-     PLAYER PATH — three development stages (ARIA tabs). Switching swaps the
-     photo, lights that stage's third of the pitch, draws its passing path and
-     runs the ball along it, fills the lane in the list and rewrites the copy
-     and CTA. The chosen stage carries into the inquiry (step 03).
+     PRICING FIELD — 60 minutes in the left zone, 90 in the right. Hover
+     (desktop) or tap a zone: it widens to 55 / 45, its player path draws,
+     the ball runs it, the price grows, its CTA switches on and the zone's
+     supporting photo fades up. Selecting also pre-fills the request form.
      ========================================================================== */
-  const LV = {
-    start: { n: '01', name: 'Starting out', exp: 'beginner', lead: 'For players beginning their soccer journey and learning foundational movement, ball control and understanding of the game.', tags: ['Movement', 'Ball control', 'Understanding the game'], cta: 'Start an inquiry for a beginner' },
-    dev: { n: '02', name: 'Developing', exp: 'developing', lead: 'For players building consistency, awareness, technique and stronger decision-making.', tags: ['Consistency', 'Awareness', 'Technique', 'Decision-making'], cta: 'Start an inquiry for a developing player' },
-    more: { n: '03', name: 'Ready for more', exp: 'advanced', lead: 'For more advanced players or teams looking to continue developing their game in a more demanding environment.', tags: ['Players or teams', 'More demanding', 'Keep developing'], cta: 'Start an inquiry for advanced / team' },
-  };
-  const LV_KEYS = Object.keys(LV);
-  const pathList = $('.path__list');
-  const pathTabs = $$('.path__lv');
-  const pathStage = $('.path__stage');
-  const pathImgs = $$('.path__media img', pathStage);
-  const pathInfo = $('.path__info', pathStage);
-  const pathBall = $('.path__ball', pathStage);
-  const pathGo = $('.path__go', pathStage);
-  let pathCur = null, pathAnim = 0;
-  const pathSubs = [];
-  const pathBallAt = (x, y) => { pathBall.style.left = `${x / 10}%`; pathBall.style.top = `${y / 2.6}%`; };
-  const runBall = (passEl) => {
-    cancelAnimationFrame(pathAnim);
-    const L = passEl.getTotalLength();
-    const end = passEl.getPointAtLength(L);
-    if (!motion) { pathBallAt(end.x, end.y); return; }
-    const t0 = performance.now(), dur = 1100;
+  const offerField = $('.offer__field');
+  const offerZones = $$('.offer__zone', offerField);
+  const offerSels = $$('.offer__sel', offerField);
+  const offerAnim = {};
+  let offerCur = null;
+  const runOfferBall = (zone) => {
+    const k = zone.dataset.z;
+    const path = $('.offer__path', zone);
+    const ball = $('.offer__ball', zone);
+    const L = path.getTotalLength();
+    const at = (p) => { const pt = path.getPointAtLength(L * p); ball.setAttribute('cx', pt.x.toFixed(1)); ball.setAttribute('cy', pt.y.toFixed(1)); };
+    cancelAnimationFrame(offerAnim[k]);
+    if (!motion) { at(1); return; }
+    const t0 = performance.now(), dur = 1200;
     const frame = (now) => {
       const t = Math.min(1, (now - t0) / dur);
-      const e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
-      const pt = passEl.getPointAtLength(L * e);
-      pathBallAt(pt.x, pt.y);
-      if (t < 1) pathAnim = requestAnimationFrame(frame);
-      else restart(pathBall, 'is-landed');
+      at(t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
+      if (t < 1) offerAnim[k] = requestAnimationFrame(frame);
     };
-    pathAnim = requestAnimationFrame(frame);
+    offerAnim[k] = requestAnimationFrame(frame);
   };
-  const setPath = (k, opts = {}) => {
-    if (!LV[k]) return;
-    const tab = pathTabs.find((b) => b.dataset.lv === k);
-    if (opts.focus) tab.focus();
-    if (k === pathCur) return;
-    pathCur = k;
-    const v = LV[k];
-    const i = LV_KEYS.indexOf(k);
-    pathTabs.forEach((b) => { const on = b === tab; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
-    pathStage.setAttribute('aria-labelledby', tab.id);
-    pathStage.dataset.lv = k;
-    pathList.style.setProperty('--lvp', (i / (LV_KEYS.length - 1)).toFixed(3));
-    pathImgs.forEach((img) => { const on = img.dataset.lv === k; if (on) img.loading = 'eager'; img.classList.toggle('is-on', on); });
-    $$('[data-lv]', $('.path__svg', pathStage)).forEach((el) => el.classList.toggle('is-on', el.dataset.lv === k));
-    $('.path__k-n', pathInfo).textContent = `${v.n} / 03`;
-    $('.path__name', pathInfo).textContent = v.name;
-    $('.path__lead', pathInfo).textContent = v.lead;
-    $('.path__tags', pathInfo).replaceChildren(...v.tags.map((t) => { const li = d.createElement('li'); li.textContent = t; return li; }));
-    $('span', pathGo).textContent = v.cta;
-    pathGo.dataset.level = v.exp;
-    if (opts.user) restart(pathInfo, 'is-swap');
-    runBall($(`.path__pass[data-lv="${k}"]`, pathStage));
-    if (tab.parentElement.scrollWidth > tab.parentElement.clientWidth) {
-      tab.parentElement.scrollTo({ left: tab.offsetLeft - parseFloat(getComputedStyle(tab.parentElement).paddingLeft), behavior: reduce ? 'auto' : 'smooth' });
+  const setOffer = (k) => {
+    if (k === offerCur || !offerZones.some((z) => z.dataset.z === k)) return;
+    offerCur = k;
+    offerField.dataset.sel = k;
+    offerZones.forEach((z) => z.classList.toggle('is-on', z.dataset.z === k));
+    offerSels.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.z === k)));
+    runOfferBall(offerZones.find((z) => z.dataset.z === k));
+  };
+  offerSels.forEach((b) => {
+    b.addEventListener('click', () => { setOffer(b.dataset.z); setSession(b.dataset.z, 'select'); });
+    if (fine) b.addEventListener('pointerenter', () => setOffer(b.dataset.z));
+  });
+  if (fine) $$('.offer__cta', offerField).forEach((a) => a.addEventListener('pointerenter', () => setOffer(a.dataset.session)));
+  onSession((k) => { if (k === '60' || k === '90') setOffer(k); });
+  setOffer(sessionChosen === '90' ? '90' : '60');
+
+  /* ==========================================================================
+     TRAINING IN MOTION — kept from the original build, switched off until
+     authentic clips of Coach Kwame's training exist (the block is `hidden`
+     in the HTML). Sources attach only when a clip comes near the viewport;
+     on desktop clips preview muted, inline and looping — only while on
+     screen. The line under the main clip tracks playback. Any clip expands
+     into the viewer. Audio never autoplays.
+     ========================================================================== */
+  const timBlock = $('.tim__videoblock');
+  if (timBlock && !timBlock.hidden) {
+    const timVideos = $$('.tim__main video, .tim__clip video');
+    const CLIPS = $$('.tim__open').map((b) => {
+      const fig = b.closest('.tim__main, .tim__clip');
+      const v = $('video', fig);
+      const cap = $('.tim__cap, .tim__ccap', fig);
+      return { v, label: $('.tim__label', cap).textContent, title: ($('b', cap) || cap).textContent.replace($('.tim__label', cap).textContent, '').trim() };
+    });
+    const preview = fine && motion && !saveData;
+    const attach = (v) => {
+      if (v.dataset.ready) return;
+      v.dataset.ready = '1';
+      $$('source', v).forEach((s) => { s.src = s.dataset.src; });
+      v.load();
+    };
+    // touch / reduced motion / data saving: clips hold their poster and load only when opened in the viewer
+    const playIO = preview && new IntersectionObserver((entries) => entries.forEach((en) => {
+      const v = en.target;
+      if (en.isIntersecting) { attach(v); v.play().catch(() => {}); }
+      else if (!v.paused) v.pause();
+    }), { rootMargin: '200px 0px', threshold: 0.15 });
+    if (playIO) timVideos.forEach((v) => playIO.observe(v));
+    const mainVideo = $('.tim__main video');
+    const prog = $('.tim__prog');
+    mainVideo.addEventListener('timeupdate', () => { if (mainVideo.duration) prog.style.setProperty('--vp', (mainVideo.currentTime / mainVideo.duration).toFixed(4)); });
+
+    const vbox = $('#vbox');
+    if (vbox && typeof vbox.showModal === 'function') {
+      const vv = $('.vbox__video', vbox);
+      const vcap = $('.vbox__cap', vbox);
+      let opener = null;
+      $$('.tim__open').forEach((btn) => btn.addEventListener('click', () => {
+        const c = CLIPS[Number(btn.dataset.clip)];
+        opener = btn;
+        const r = btn.getBoundingClientRect();
+        vbox.style.setProperty('--ar', c.v.dataset.ar || (c.v.videoWidth ? (c.v.videoWidth / c.v.videoHeight).toFixed(3) : '0.8'));
+        vv.replaceChildren(...$$('source', c.v).map((s) => { const n = d.createElement('source'); n.src = s.dataset.src; n.type = s.type; return n; }));
+        vv.poster = c.v.poster;
+        vv.setAttribute('aria-label', c.v.getAttribute('aria-label'));
+        vv.load();
+        vcap.innerHTML = '';
+        const b = d.createElement('b'); b.textContent = c.label;
+        vcap.append(b, d.createTextNode(c.title));
+        timVideos.forEach((v) => v.pause());
+        vbox.showModal();
+        // the viewer grows out of the clip that was clicked
+        const dr = vbox.getBoundingClientRect();
+        vbox.style.setProperty('--ox', `${r.left + r.width / 2 - dr.left}px`);
+        vbox.style.setProperty('--oy', `${r.top + r.height / 2 - dr.top}px`);
+        lenis && lenis.stop();
+        vv.play().catch(() => {});
+      }));
+      const closeV = () => vbox.close();
+      $('.vbox__close', vbox).addEventListener('click', closeV);
+      vbox.addEventListener('click', (e) => { if (e.target === vbox) closeV(); });
+      vbox.addEventListener('close', () => {
+        vv.pause();
+        lenis && lenis.start();
+        opener && opener.focus({ preventScroll: true });
+        if (preview) timVideos.forEach((v) => { const r = v.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) v.play().catch(() => {}); });
+      });
+    } else {
+      // no <dialog>: let the clip itself play with controls
+      $$('.tim__open').forEach((btn) => btn.addEventListener('click', () => { const v = $('video', btn.parentElement); attach(v); v.controls = true; v.play().catch(() => {}); btn.remove(); }));
     }
-  };
-  pathTabs.forEach((b, i) => {
-    b.addEventListener('click', () => setPath(b.dataset.lv, { user: true }));
-    if (fine) b.addEventListener('pointerenter', () => setPath(b.dataset.lv, { user: true }));
-    b.addEventListener('keydown', (e) => {
-      const n = pathTabs.length;
-      const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1 + n, ArrowUp: i - 1 + n, Home: 0, End: n - 1 }[e.key];
-      if (k === undefined) return;
-      e.preventDefault();
-      setPath(pathTabs[k % n].dataset.lv, { focus: true, user: true });
-    });
-  });
-  // the CTA carries the stage into the inquiry
-  pathGo.addEventListener('click', () => pathSubs.forEach((fn) => fn(pathGo.dataset.level, LV[pathCur].name)));
-  setPath('start');
-
-  /* ==========================================================================
-     TRAINING DIRECTIONS — pitch-based selector (ARIA tabs + tappable zones).
-     Switching lights the zone, pops its markers and draws its drill / pass
-     line, moves the ball, swaps the photo (circle mask) and staggers in the
-     copy + CTA.
-     ========================================================================== */
-  const tsTabs = $$('.ts__tab');
-  const tsInfos = $$('.ts__info');
-  const tsImgs = $$('.ts__media img');
-  const tsZones = $$('.ts__zone');
-  const tsHits = $$('.ts__hit');
-  const tsBall = $('.ts__ball');
-  const tsPitch = $('.ts__pitch');
-  const TS_BALL = { private: ['12.4%', '50%'], group: ['36%', '27.3%'], beginner: ['30.5%', '87%'], team: ['67%', '50%'] };
-  tsZones.forEach((z) => $$('.ts__m, .ts__cone', z).forEach((m, i) => m.style.setProperty('--i', i)));
-  let tsCur = null, tsLand = 0;
-  const tsSet = (t, focusTab) => {
-    const tab = tsTabs.find((b) => b.dataset.t === t);
-    if (focusTab) tab.focus();
-    if (t === tsCur) return;
-    const prev = tsCur;
-    tsCur = t;
-    tsTabs.forEach((b) => { const on = b.dataset.t === t; b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; });
-    const inP = tsInfos.find((p) => p.id === `ts-p-${t}`);
-    const outP = tsInfos.find((p) => p.classList.contains('is-active'));
-    if (outP !== inP) {
-      inP.classList.add('is-entering');
-      void inP.offsetWidth;
-      if (outP) outP.classList.remove('is-active');
-      inP.classList.remove('is-entering');
-      inP.classList.add('is-active');
-    }
-    tsImgs.forEach((img) => img.classList.remove('is-prev'));
-    tsImgs.forEach((img) => {
-      if (img.dataset.t === prev) { img.classList.remove('is-on'); img.classList.add('is-prev'); }
-      img.classList.toggle('is-on', img.dataset.t === t);
-    });
-    tsZones.forEach((z) => z.classList.toggle('is-on', z.dataset.z === t));
-    tsHits.forEach((h) => h.classList.toggle('is-on', h.dataset.t === t));
-    tsPitch.dataset.t = t;
-    tsBall.style.setProperty('--bx', TS_BALL[t][0]);
-    tsBall.style.setProperty('--by', TS_BALL[t][1]);
-    tsBall.classList.remove('is-landed');
-    clearTimeout(tsLand);
-    tsLand = setTimeout(() => restart(tsBall, 'is-landed'), 850);
-  };
-  tsTabs.forEach((b, i) => {
-    b.addEventListener('click', () => setTraining(b.dataset.t, 'selector'));
-    b.addEventListener('keydown', (e) => {
-      const n = tsTabs.length;
-      const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1 + n, ArrowUp: i - 1 + n, Home: 0, End: n - 1 }[e.key];
-      if (k === undefined) return;
-      e.preventDefault();
-      const t = tsTabs[k % n].dataset.t;
-      setTraining(t, 'selector');
-      tsSet(t, true);
-    });
-  });
-  tsHits.forEach((h) => h.addEventListener('click', () => setTraining(h.dataset.t, 'selector')));
-  tsSet(trainShown);
-  onTraining((t) => tsSet(t));
-
-  /* ==========================================================================
-     3D PITCH — lazy-loaded, driven by the view tabs
-     ========================================================================== */
-  const viewer = $('#viewer');
-  const tabs = $$('.seg__btn');
-  let pitch = null;
-  let viewMode = 'individual';
-  const selectView = (tab, focus) => {
-    viewMode = tab.dataset.mode;
-    tabs.forEach((t) => {
-      const on = t === tab;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-      d.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-    });
-    if (focus) tab.focus();
-    if (pitch) pitch.setMode(viewMode);
-  };
-  tabs.forEach((t, i) => {
-    t.addEventListener('click', () => selectView(t));
-    t.addEventListener('keydown', (e) => {
-      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-      e.preventDefault();
-      selectView(tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length], true);
-    });
-  });
-  let loading = null;
-  const load3D = () => {
-    if (loading) return loading;
-    loading = import('./pitch3d.js')
-      .then((mod) => { pitch = mod.mountPitch(viewer); if (pitch) pitch.setMode(viewMode); })
-      .catch(() => viewer.classList.add('no-webgl'));
-    return loading;
-  };
-  const loadIO = new IntersectionObserver(([en]) => { if (en.isIntersecting) { loadIO.disconnect(); load3D(); } }, { rootMargin: '900px 0px' });
-  loadIO.observe(viewer);
-  // Warm up three.js in the background once the page is idle
-  addEventListener('load', () => (window.requestIdleCallback ? requestIdleCallback(load3D, { timeout: 4000 }) : setTimeout(load3D, 2500)));
-
-  /* ==========================================================================
-     TRAINING IN MOTION — authentic clips from Coach Santana's public reels.
-     Sources attach only when a clip comes near the viewport. On desktop
-     (and when motion is allowed and data saving is off) clips preview muted,
-     inline and looping — and only while on screen. The passing line under
-     the main clip tracks its playback. Any clip expands into the viewer.
-     ========================================================================== */
-  const timVideos = $$('.tim__main video, .tim__clip video');
-  const CLIPS = $$('.tim__open').map((b) => {
-    const fig = b.closest('.tim__main, .tim__clip');
-    const v = $('video', fig);
-    const cap = $('.tim__cap, .tim__ccap', fig);
-    return { v, label: $('.tim__label', cap).textContent, title: ($('b', cap) || cap).textContent.replace($('.tim__label', cap).textContent, '').trim() };
-  });
-  const preview = fine && motion && !saveData;
-  const attach = (v) => {
-    if (v.dataset.ready) return;
-    v.dataset.ready = '1';
-    $$('source', v).forEach((s) => { s.src = s.dataset.src; });
-    v.load();
-  };
-  // touch / reduced motion / data saving: clips hold their poster and load only when opened in the viewer
-  const playIO = preview && new IntersectionObserver((entries) => entries.forEach((en) => {
-    const v = en.target;
-    if (en.isIntersecting) { attach(v); v.play().catch(() => {}); }
-    else if (!v.paused) v.pause();
-  }), { rootMargin: '200px 0px', threshold: 0.15 });
-  if (playIO) timVideos.forEach((v) => playIO.observe(v));
-  const mainVideo = $('.tim__main video');
-  const prog = $('.tim__prog');
-  mainVideo.addEventListener('timeupdate', () => { if (mainVideo.duration) prog.style.setProperty('--vp', (mainVideo.currentTime / mainVideo.duration).toFixed(4)); });
-
-  const vbox = $('#vbox');
-  if (vbox && typeof vbox.showModal === 'function') {
-    const vv = $('.vbox__video', vbox);
-    const vcap = $('.vbox__cap', vbox);
-    let opener = null;
-    $$('.tim__open').forEach((btn) => btn.addEventListener('click', () => {
-      const c = CLIPS[Number(btn.dataset.clip)];
-      opener = btn;
-      const r = btn.getBoundingClientRect();
-      vbox.style.setProperty('--ar', c.v.dataset.ar || (c.v.videoWidth ? (c.v.videoWidth / c.v.videoHeight).toFixed(3) : '0.8'));
-      vv.replaceChildren(...$$('source', c.v).map((s) => { const n = d.createElement('source'); n.src = s.dataset.src; n.type = s.type; return n; }));
-      vv.poster = c.v.poster;
-      vv.setAttribute('aria-label', c.v.getAttribute('aria-label'));
-      vv.load();
-      vcap.innerHTML = '';
-      const b = d.createElement('b'); b.textContent = c.label;
-      vcap.append(b, d.createTextNode(c.title));
-      timVideos.forEach((v) => v.pause());
-      vbox.showModal();
-      // the viewer grows out of the clip that was clicked
-      const dr = vbox.getBoundingClientRect();
-      vbox.style.setProperty('--ox', `${r.left + r.width / 2 - dr.left}px`);
-      vbox.style.setProperty('--oy', `${r.top + r.height / 2 - dr.top}px`);
-      lenis && lenis.stop();
-      vv.play().catch(() => {});
-    }));
-    const closeV = () => vbox.close();
-    $('.vbox__close', vbox).addEventListener('click', closeV);
-    vbox.addEventListener('click', (e) => { if (e.target === vbox) closeV(); });
-    vbox.addEventListener('close', () => {
-      vv.pause();
-      lenis && lenis.start();
-      opener && opener.focus({ preventScroll: true });
-      if (preview) timVideos.forEach((v) => { const r = v.getBoundingClientRect(); if (r.bottom > 0 && r.top < innerHeight) v.play().catch(() => {}); });
-    });
-  } else {
-    // no <dialog>: let the clip itself play with controls
-    $$('.tim__open').forEach((btn) => btn.addEventListener('click', () => { const v = $('video', btn.parentElement); attach(v); v.controls = true; v.play().catch(() => {}); btn.remove(); }));
   }
 
   /* ==========================================================================
@@ -530,12 +398,12 @@
   }
 
   /* ==========================================================================
-     TRAINING INQUIRY — four short steps: who it's for → training interest →
-     player experience → contact. One step per panel; the ball moves up the
-     tactical-field progress bar and goes into the goal on send. Interest is
-     pre-filled from the visitor's earlier training choice, experience from
-     the player path. Inquiry first: no booking, reserved spots or payment.
-     Without JS it is one ordinary form (Netlify Forms).
+     SESSION REQUEST — five short steps: session → who is getting in touch →
+     player → contact → preferred day & time (+ payment preview). One step per
+     panel; the ball moves along the field progress rail and goes into the
+     goal on send. Step 01 is pre-filled from any session chosen earlier on
+     the page. A request, not an instant booking; no payment is taken.
+     Without JS it is one ordinary form (Netlify Forms → thank-you.html).
      ========================================================================== */
   const iq = $('#inquiry');
   const iqSteps = $$('.iq-step', iq);
@@ -549,22 +417,25 @@
   const iqStatus = $('#formStatus');
   const iqDone = $('.iq__done', iq);
   const iqPre = $('.iq-pre', iq);
-  const iqFrom = $('.iq-from', iq);
-  const iqPathRow = $('.iq__sum-match', iq);
+  const iqAmt = $('[data-amt]', iq);
+  const fPlayer = $('#f-player');
+  const fAge = $('#f-age');
   const fName = $('#f-name');
   const fEmail = $('#f-email');
   const fPhone = $('#f-phone');
-  const fPath = $('#f-path');
+  const fWhen = $('#f-when');
   const last = iqSteps.length - 1;
   const MARK_X = iqMarks.map((li) => parseFloat(li.style.getPropertyValue('--x')));
   const GOAL_X = 96;
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-  let iqStep = 0, iqMax = 0, pathName = '';
+  let iqStep = 0, iqMax = 0;
 
-  const checked = (name) => $$(`input[name="${name}"]:checked`, iq).map((i) => i.value);
-  const one = (name) => checked(name)[0] || '';
+  const checkedInput = (name) => $(`input[name="${name}"]:checked`, iq);
+  const one = (name) => { const i = checkedInput(name); return i ? i.value : ''; };
 
   const MSG = {
+    player_name: "Please enter the player's name.",
+    player_age: 'Please enter the age as a number (or leave it empty).',
     name: 'Please enter your name.',
     email: 'Please enter a valid email address.',
     phone: 'Please check the phone number (or leave it empty).',
@@ -574,6 +445,7 @@
     let bad = false;
     if (el === fPhone && v && !/^[+()\d\s.-]{7,}$/.test(v)) bad = true;
     if (el === fEmail && v && !EMAIL_RE.test(v)) bad = true;
+    if (el === fAge && v && !/^\d{1,2}$/.test(v)) bad = true;
     if (el.required && el.value && !v) bad = true;
     el.setCustomValidity(bad ? 'bad' : '');
     return el.checkValidity();
@@ -588,46 +460,51 @@
     }
     return ok;
   };
-  const textFields = [fName, fEmail, fPhone];
+  const textFields = [fPlayer, fAge, fName, fEmail, fPhone];
   textFields.forEach((el) => {
     el.addEventListener('blur', () => { if (el.value || el.getAttribute('aria-invalid') === 'true') validate(el); });
     el.addEventListener('input', () => { if (el.getAttribute('aria-invalid') === 'true') validate(el); });
   });
 
-  const STEP_FIELDS = { 3: [fName, fEmail, fPhone] };
+  const STEP_FIELDS = { 2: [fPlayer, fAge], 3: [fName, fEmail, fPhone] };
   const STEP_CHOICE = {
-    0: ['training_for', 'Please choose who the training is for.'],
-    1: ['training_interest', 'Please choose a training interest — "Not sure" is fine.'],
-    2: ['experience', 'Please choose the closest option — "Not sure" is fine.'],
+    0: ['session', 'Please choose a session — "Not sure" is fine.'],
+    1: ['contact_role', 'Please choose who is getting in touch.'],
   };
   const stepValid = (k, show) => {
     let ok = true;
     (STEP_FIELDS[k] || []).forEach((el) => { if (!(show ? validate(el) : check(el))) ok = false; });
     if (STEP_CHOICE[k]) {
       const [name, msg] = STEP_CHOICE[k];
-      const has = checked(name).length > 0;
+      const has = !!checkedInput(name);
       if (show) $('.iq-step__err', iqSteps[k]).textContent = has ? '' : msg;
       if (!has) ok = false;
     }
     return ok;
   };
 
-  // live summary: side card + the review in the last step
-  const answers = () => ({ who: one('training_for'), interest: one('training_interest'), experience: one('experience'), path: pathName });
-  const setText = (el, v) => {
+  // live summary: the side card (leads with the price) + the review in the last step
+  const answers = () => {
+    const s = checkedInput('session');
+    const price = s && /^\$/.test(s.dataset.price) ? s.dataset.price : (s && s.dataset.session === 'group' ? 'Ask' : '');
+    const player = [fPlayer.value.trim(), fAge.value.trim() && `age ${fAge.value.trim()}`, one('experience')].filter(Boolean).join(' · ');
+    const contact = [fName.value.trim(), fEmail.value.trim(), fPhone.value.trim()].filter(Boolean).join(' · ');
+    return { session: s ? s.value : '', key: s ? s.dataset.session : '', price, who: one('contact_role'), player, contact, when: fWhen.value.trim() };
+  };
+  const setText = (el, v, empty = '—') => {
     if (!el) return;
     const before = el.textContent;
-    el.textContent = v || '—';
+    el.textContent = v || empty;
     el.classList.toggle('is-empty', !v);
     if (v && v !== before) restart(el, 'is-flash');
   };
   const updateSummary = () => {
     const a = answers();
-    ['who', 'interest', 'experience', 'path'].forEach((k) => {
-      setText($(`[data-s="${k}"]`, iq), a[k]);
-      setText($(`[data-r="${k}"]`, iq), a[k]);
-    });
-    iqPathRow.hidden = !a.path;
+    setText($('[data-s="price"]', iq), a.price);
+    setText($('[data-s="session"]', iq), a.session, 'Choose a session');
+    ['who', 'player', 'when'].forEach((k) => setText($(`[data-s="${k}"]`, iq), a[k]));
+    ['session', 'who', 'player', 'contact'].forEach((k) => setText($(`[data-r="${k}"]`, iq), a[k]));
+    if (iqAmt) iqAmt.textContent = /^\$/.test(a.price) ? a.price : '—';
   };
 
   const placeBall = (x) => {
@@ -653,7 +530,7 @@
     if (focus) {
       if (iq.getBoundingClientRect().top < 0) scrollToTarget(iq);
       const s = iqSteps[i];
-      const first = $('input:checked', s) || $('input:not([type="hidden"]), textarea', s);
+      const first = $('.iq-opt input:checked', s) || $('input:not([type="hidden"]), textarea', s);
       setTimeout(() => first && first.focus({ preventScroll: true }), reduce ? 0 : 120);
     }
   };
@@ -664,15 +541,16 @@
   });
   iqBack.addEventListener('click', () => goStep(Math.max(0, iqStep - 1)));
   $$('.iq-edit', iq).forEach((b) => b.addEventListener('click', () => goStep(Number(b.dataset.go))));
+  iq.addEventListener('input', (e) => { if (e.target.matches('input[type="text"], input[type="email"], input[type="tel"], textarea')) updateSummary(); });
 
   // picking a single-choice card with the pointer moves on by itself (keyboard users keep control)
   let pointerPick = 0;
   iq.addEventListener('pointerdown', (e) => { if (e.target.closest('.iq-opt')) pointerPick = performance.now(); });
   iq.addEventListener('change', (e) => {
     const inp = e.target;
-    if (inp.name === 'training_interest') {
+    if (inp.name === 'session') {
       iqPre.hidden = true;
-      if (TYPES.includes(inp.dataset.t)) setTraining(inp.dataset.t, 'form');
+      setSession(inp.dataset.session, 'form');
     }
     updateSummary();
     const k = iqSteps.indexOf(inp.closest('.iq-step'));
@@ -684,39 +562,25 @@
     iqMarks.forEach((m, j) => m.classList.toggle('is-done', j !== iqStep && j <= iqMax && stepValid(j, false)));
   });
 
-  // a training direction chosen elsewhere on the page pre-fills step 02
+  // a session chosen elsewhere on the page pre-fills step 01
   const flash = (el) => { el.classList.remove('is-flash'); setTimeout(() => el.classList.add('is-flash'), lenis ? 900 : 200); };
-  const presetTraining = (t, doFlash) => {
-    const inp = $(`input[name="training_interest"][data-t="${t}"]`, iq);
-    if (!inp) return;
+  const presetSession = (k, doFlash) => {
+    const inp = $(`input[name="session"][data-session="${k}"]`, iq);
+    if (!inp || iq.classList.contains('is-done')) return;
     inp.checked = true;
     iqPre.hidden = false;
     if (doFlash) flash(inp.closest('.iq-opt'));
     updateSummary();
-    if (!iq.classList.contains('is-done')) goStep(iqStep, false);
+    goStep(iqStep, false);
   };
-  onTraining((t, from) => { if (from !== 'form') presetTraining(t, from === 'cta'); });
-
-  // the player path carries its stage into step 03
-  pathSubs.push((lv, name) => {
-    const inp = $(`input[name="experience"][data-lv="${lv}"]`, iq);
-    if (!inp) return;
-    inp.checked = true;
-    pathName = name;
-    fPath.value = name;
-    iqFrom.hidden = false;
-    $('.iq-from__v', iqFrom).textContent = name;
-    flash(inp.closest('.iq-opt'));
-    updateSummary();
-    if (!iq.classList.contains('is-done')) goStep(iqStep, false);
-  });
+  onSession((k, from) => { if (from !== 'form') presetSession(k, from === 'cta'); });
 
   const showDone = (first, preview) => {
     const a = answers();
-    const rows = [['For', a.who], ['Interested in', a.interest], ['Experience', a.experience]].filter((r) => r[1]);
+    const rows = [['Session', a.session], ['Player', fPlayer.value.trim()], ['Preferred time', a.when]].filter((r) => r[1]);
     $('.iq__done-p', iqDone).textContent = preview
-      ? `Thanks, ${first}. (Preview mode — inquiries send for real once the site is live on Netlify.)`
-      : `Thanks, ${first}. Your inquiry is on its way to Coach Santana so he can reply about training options. Nothing has been booked, reserved or charged.`;
+      ? `Thanks, ${first}. (Preview mode: requests are delivered once the site is live on Netlify.)`
+      : `Thanks, ${first}. Coach Kwame will confirm the date, time and next steps with you directly. Nothing has been booked or charged yet.`;
     $('.iq__done-list', iqDone).replaceChildren(...rows.map(([k, v]) => { const li = d.createElement('li'); const s = d.createElement('span'); s.textContent = k; li.append(s, d.createTextNode(v)); return li; }));
     iq.classList.add('is-done');
     iqMarks.forEach((m) => { m.classList.remove('is-cur'); m.classList.add('is-done'); });
@@ -732,11 +596,8 @@
     iqDone.hidden = true;
     iq.classList.remove('is-done');
     iqMax = 0;
-    pathName = '';
-    fPath.value = '';
-    iqFrom.hidden = true;
     iqPre.hidden = true;
-    if (trainChosen) presetTraining(trainChosen, false);
+    if (sessionChosen) presetSession(sessionChosen, false);
     updateSummary();
     goStep(0);
   });
@@ -771,36 +632,32 @@
         showDone(first, false);
       }
     } catch (err) {
-      iqStatus.textContent = 'Something went wrong sending your inquiry. Please try again in a moment.';
+      iqStatus.textContent = 'Something went wrong sending your request. Please try again in a moment.';
       iqStatus.classList.add('is-error');
     }
     iqSubmit.disabled = false;
   });
 
-  if (trainChosen) presetTraining(trainChosen, false);
+  if (sessionChosen) presetSession(sessionChosen, false);
   updateSummary();
   goStep(0, false);
 
   /* ==========================================================================
      Scroll reveals & effects
      ========================================================================== */
-  const mosaic = $('.youth__mosaic');
   if (motion) {
-    const once = (el, fn, start = 'top 86%') => ST.create({ trigger: el, start, once: true, onEnter: fn });
+    const once = (el, fn, start = 'top 86%') => el && ST.create({ trigger: el, start, once: true, onEnter: fn });
     const notHero = (el) => !el.closest('.hero');
 
     $$('.split').forEach((el) => once(el, () => el.classList.add('in')));
     $$('.fade').filter(notHero).forEach((el) => once(el, () => el.classList.add('in')));
     $$('.reveal-img').filter(notHero).forEach((el) => once(el, () => el.classList.add('in'), 'top 82%'));
     $$('.seam').forEach((el) => once(el, () => el.classList.add('in'), 'top 90%'));
-    $$('.snap__row').forEach((el) => once(el, () => el.classList.add('in'), 'top 80%'));
-    once(tsPitch, () => tsPitch.classList.add('in'), 'top 78%');
-    once(mosaic, () => mosaic.classList.add('in'), 'top 70%');
-    $$('.zones').forEach((group) => $$('.fade', group).forEach((el, i) => { el.style.transitionDelay = `${(i % 3) * 0.08}s`; }));
     $$('.tim__clips .fade').forEach((el, i) => { el.style.transitionDelay = `${i * 0.08}s`; });
+    $$('.grid .tile').forEach((el, i) => { el.style.transitionDelay = `${(i % 3) * 0.08}s`; });
 
-    // At a glance: the photo drifts inside its frame
-    G.fromTo('.snap__media img', { yPercent: 6 }, { yPercent: -6, ease: 'none', scrollTrigger: { trigger: '.snap', start: 'top bottom', end: 'bottom top', scrub: true } });
+    // pricing: the selected zone's path draws again when the field arrives
+    once(offerField, () => { const z = offerZones.find((x) => x.classList.contains('is-on')); z && runOfferBall(z); }, 'top 70%');
 
     // About intro fills in word by word
     const intro = $('.about__intro');
@@ -810,22 +667,21 @@
       scrollTrigger: { trigger: intro, start: 'top 80%', end: 'bottom 45%', scrub: true },
     });
 
-    // Training in motion: the main clip opens up as it arrives (desktop only)
-    if (wide) {
+    // the About portrait drifts slightly against the monogram plate (desktop only)
+    if (wide) G.fromTo('.about__portrait img', { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: '.about', start: 'top bottom', end: 'bottom top', scrub: true } });
+
+    // Training in motion: the main clip opens up as it arrives (desktop only, once clips exist)
+    if (wide && timBlock && !timBlock.hidden) {
       G.fromTo('.tim__main', { clipPath: 'inset(6% 8% 6% 8% round 24px)' }, {
         clipPath: 'inset(0% 0% 0% 0% round 24px)', ease: 'none',
         scrollTrigger: { trigger: '.tim__grid', start: 'top 92%', end: 'top 40%', scrub: true },
       });
-      G.fromTo('.youth__ph--a img', { yPercent: -4 }, { yPercent: 4, ease: 'none', scrollTrigger: { trigger: '.youth', start: 'top bottom', end: 'bottom top', scrub: true } });
     }
 
     once($('.fcta__title'), () => G.to('.fcta__title .line__in', { y: 0, yPercent: 0, duration: 1.2, stagger: 0.14, ease: 'expo.out' }), 'top 85%');
 
     ST.sort();
     d.fonts && d.fonts.ready.then(() => { ST.sort(); ST.refresh(); });
-  } else {
-    tsPitch.classList.add('in');
-    mosaic.classList.add('in');
   }
 
   /* ==========================================================================
