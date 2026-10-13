@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inquiry sent | Coach Santana — Soccer Coaching</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%23153C32'/%3E%3Cpath d='M26.1 13.6A11 11 0 1 0 26.1 30.4' fill='none' stroke='%23F5F0E6' stroke-width='3.6' stroke-linecap='round'/%3E%3Cpath d='M36.5 14A5 5 0 1 0 33 22.5A5 5 0 1 1 29.5 31' fill='none' stroke='%23BBD64A' stroke-width='3.2' stroke-linecap='round'/%3E%3Cpath d='M7 40H41' stroke='%23F5F0E6' stroke-opacity='.45' stroke-width='1.6' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='40' r='2.6' fill='%23BBD64A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .page { min-height: 100vh; display: grid; place-items: center; padding: 40px 20px; background: var(--green); color: var(--on-dark); text-align: center; }
+  .page__inner { width: 100%; max-width: 640px; min-width: 0; }
+  .page .h2 { margin-top: 24px; }
+  .page p { margin-top: 18px; color: var(--on-dark-2); }
+  .page .btn { margin-top: 30px; }
+  .page__lane { width: 220px; height: 60px; margin: 0 auto; overflow: visible; }
+  .page__lane path { fill: none; stroke: var(--lime); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: lane 1.4s cubic-bezier(.5, 0, .2, 1) .2s forwards; }
+  .page__lane circle { fill: var(--on-dark); }
+  .page__lane .goal { fill: none; stroke: var(--on-dark); stroke-width: 2.5; }
+  @keyframes lane { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .page__lane path { animation: none; stroke-dashoffset: 0; } }
+</style>
+</head>
+<body>
+<main class="page">
+  <div class="page__inner">
+    <svg class="page__lane" viewBox="0 0 220 60" aria-hidden="true"><path pathLength="1" d="M10 50C60 10 120 60 196 30"/><circle cx="10" cy="50" r="5"/><path class="goal" d="M200 14h12v32h-12"/></svg>
+    <h1 class="h2 h2--light">Inquiry sent. <em>Thank you!</em></h1>
+    <p>Your training inquiry is on its way to Coach Santana, so he can get back to you about the options. Nothing has been booked, reserved or charged.</p>
+    <a class="btn btn--lime" href="/">
+      <span>Back to the homepage</span><span class="btn__ic" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+    </a>
+  </div>
+</main>
+</body>
+</html>
